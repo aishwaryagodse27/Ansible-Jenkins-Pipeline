@@ -1,0 +1,10 @@
+- name: Playbook to install Maven and Docker
+  hosts: webserver
+  become: true
+  tasks:
+  - name: Install Maven on worker nodes
+    package: name=maven state=present
+  - name: Install Docker on worker nodes
+    package: name=docker-ce state=present
+  - name: Start Docker Service
+    service: name=docker state=started
