@@ -1,0 +1,17 @@
+- name: Playbook for integration and deployment
+  hosts: webserver
+  become: true
+  vars:
+    repopath: https://github.com/Sonal0409/DevOpsCodeDemo.git
+    destpath: /tmp/projectcode
+  tasks:
+  - name: Clone the repo which has the code on worker nodes
+    git: repo={{repopath}} dest={{destpath}}
+  - name: Execute Maven command to build the code
+    command: chdir={{destpath}} mvn package
+  - name: Copy the artifact from target folder to current directory
+    copy: src=/tmp/projectcode/target/addressbook.war dest=/tmp/projectcode remote_src=yes
+  - name: Build the dockerfile
+    command: chdir={{destpath}} docker build -t myimageansible .
+  - name: Run the image and deploy application on the container
+    command: docker run -d -P myimageansible
